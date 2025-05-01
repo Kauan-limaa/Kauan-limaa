@@ -10,7 +10,7 @@ public:
   string get_nome() const {return nome;}
 
   void set_cod_autor(int cod_autor){this->cod_autor = cod_autor;}
-  void set_nome(string& nome) {this->nome = nome;};
+  void set_nome(string nome) {this->nome = nome;};
 
 };
 
