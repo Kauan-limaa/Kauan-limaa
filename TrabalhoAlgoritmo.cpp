@@ -1,5 +1,6 @@
 #include <iostream>
 #include <locale.h>
+#include <vector>
 using namespace std;
 
 #include "Cidades.h"
@@ -10,7 +11,8 @@ using namespace std;
 #include "Livros.h"
 
 // Função para leitura da classe Cidades
-void leitura_cidades(Cidades& c) {
+Cidades leitura_cidades() {
+    Cidades c;
     int codigo;
     string nome, uf;
 
@@ -29,10 +31,13 @@ void leitura_cidades(Cidades& c) {
     cout << "UF: ";
     getline(cin, uf);
     c.setuf(uf);
+
+    return c;
 }
 
 // Função para leitura da classe Pessoas
-void leitura_pessoas(Pessoas& p) {
+Pessoas leitura_pessoas() {
+    Pessoas p;
     int codigo, codigo_cidade;
     string nome, cpf, endereco;
 
@@ -59,10 +64,13 @@ void leitura_pessoas(Pessoas& p) {
     cout << "Código (cidade): ";
     cin >> codigo_cidade;
     p.setcod_cidade(codigo_cidade);
+
+    return p;
 }
 
 // Função para leitura da classe Editoras
-void leitura_editoras(Editoras& e) {
+Editoras leitura_editoras() {
+    Editoras e;
     int codigo, codigo_cidade;
     string nome;
 
@@ -81,10 +89,13 @@ void leitura_editoras(Editoras& e) {
     cout << "Código (cidade): ";
     cin >> codigo_cidade;
     e.setcod_cidade(codigo_cidade);
+
+    return e;
 }
 
 // Função para leitura da classe Autores
-void leitura_autores(Autores& a) {
+Autores leitura_autores() {
+    Autores a;
     int codigo;
     string nome;
 
@@ -99,10 +110,13 @@ void leitura_autores(Autores& a) {
     cout << "Nome: ";
     getline(cin, nome);
     a.set_nome(nome);
+
+    return a;
 }
 
 // Função para leitura da classe Generos
-void leitura_genero(Generos& g) {
+Generos leitura_genero() {
+    Generos g;
     int codigo;
     string nome;
 
@@ -117,10 +131,13 @@ void leitura_genero(Generos& g) {
     cout << "Nome: ";
     getline(cin, nome);
     g.setdescricao_genero(nome);
+
+    return g;
 }
 
 // Função para leitura da classe Livros
-void leitura_livros(Livros& l) {
+Livros leitura_livros() {
+    Livros l;
     int codigo, codigo_editora, codigo_autor, codigo_genero;
     string nome, disponivel;
 
@@ -153,6 +170,8 @@ void leitura_livros(Livros& l) {
     cout << "Livro disponível? (Sim ou Não): ";
     getline(cin, disponivel);
     l.setDisponivel(disponivel);
+
+    return l;
 }
 
 
@@ -161,12 +180,12 @@ int main() {
     setlocale(LC_ALL, "Portuguese");
 
     int opcao;
-    Cidades c;
-    Pessoas p;
-    Editoras e;
-    Autores a;
-    Generos g;
-    Livros l;
+    vector<Cidades> cidades;
+    vector<Pessoas> pessoas;
+    vector<Editoras> editoras;
+    vector<Autores> autores;
+    vector<Generos> generos;
+    vector<Livros> livros;
 
     do {
         cout << "\n=== MENU PRINCIPAL ===\n";
@@ -195,22 +214,22 @@ int main() {
 
                     switch (opcaoCadastro) {
                         case 1:
-                            leitura_cidades(c);
+                            cidades.push_back(leitura_cidades());
                             break;
                         case 2:
-                            leitura_pessoas(p);
+                            pessoas.push_back(leitura_pessoas());
                             break;
                         case 3:
-                            leitura_editoras(e);
+                            editoras.push_back(leitura_editoras());
                             break;
                         case 4:
-                            leitura_autores(a);
+                            autores.push_back(leitura_autores());
                             break;
                         case 5:
-                            leitura_genero(g);
+                            generos.push_back(leitura_genero());
                             break;
                         case 6:
-                            leitura_livros(l);
+                            livros.push_back(leitura_livros());
                             break;
                         case 0:
                             cout << "Voltando ao menu principal...\n";
@@ -233,7 +252,7 @@ int main() {
 
     } while (opcao != 0);
 
-    cout << "CPF: " << p.getcpf();
+    cout << "CPF: " << pessoas[0].getcpf();
 
     return 0;
 }
