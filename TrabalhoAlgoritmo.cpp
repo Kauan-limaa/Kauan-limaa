@@ -36,7 +36,7 @@ Cidades leitura_cidades() {
 }
 
 // Função para leitura da classe Pessoas
-Pessoas leitura_pessoas() {
+Pessoas leitura_pessoas(const vector<Cidades>& cidades) {
     Pessoas p;
     int codigo, codigo_cidade;
     string nome, cpf, endereco;
@@ -53,7 +53,7 @@ Pessoas leitura_pessoas() {
     getline(cin, nome);
     p.setnome_pessoa(nome);
 
-    cout << "CPF (inserir pontos e traços): ";
+    cout << "CPF: ";
     getline(cin, cpf);
     p.setcpf(cpf);
 
@@ -64,6 +64,7 @@ Pessoas leitura_pessoas() {
     cout << "Código (cidade): ";
     cin >> codigo_cidade;
     p.setcod_cidade(codigo_cidade);
+    p.dadoscidade(cidades);
 
     return p;
 }
@@ -217,7 +218,7 @@ int main() {
                             cidades.push_back(leitura_cidades());
                             break;
                         case 2:
-                            pessoas.push_back(leitura_pessoas());
+                            pessoas.push_back(leitura_pessoas(cidades));
                             break;
                         case 3:
                             editoras.push_back(leitura_editoras());
@@ -252,7 +253,7 @@ int main() {
 
     } while (opcao != 0);
 
-    cout << "CPF: " << pessoas[0].getcpf();
+    cout << "Nome editora: " << editoras[1].getnome_editora();
 
     return 0;
 }
