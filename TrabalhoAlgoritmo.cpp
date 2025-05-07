@@ -3,12 +3,14 @@
 #include <vector>
 using namespace std;
 
-#include "Cidades.h"
-#include "Pessoas.h"
-#include "Editoras.h"
 #include "Autores.h"
+#include "Cidades.h"
+#include "Editoras.h"
 #include "Generos.h"
 #include "Livros.h"
+#include "Pessoas.h"
+#include "Data.h"
+#include "Emprestimo.h"
 
 // Função para leitura da classe Cidades
 Cidades leitura_cidades() {
@@ -137,7 +139,7 @@ Generos leitura_genero() {
 }
 
 // Função para leitura da classe Livros
-Livros leitura_livros() {
+Livros leitura_livros(const vector<Editoras>& editora, const vector<Autores>& autor, const vector<Generos>& genero) {
     Livros l;
     int codigo, codigo_editora, codigo_autor, codigo_genero;
     string nome, disponivel;
@@ -175,6 +177,60 @@ Livros leitura_livros() {
     return l;
 }
 
+// Função para leitura da classe Emprestimo;
+Emprestimo leitura_emprestimo() {
+    Emprestimo emp;
+    int codigo_emprestimo, codigo_pessoa, codigo_livro;
+    int dia, mes, ano;
+    Data data_emprestimo;
+    Data data_prev_dev;
+    Data data_devolucao;
+    cout << "\n\nInserir dados do Empréstimo\n";
+    cout << "Código do Empréstimo: ";
+    cin >> codigo_emprestimo;
+    emp.set_cod_emprestimo(codigo_emprestimo);
+    cout << "Código da Pessoa: ";
+    cin >> codigo_pessoa;
+    emp.set_cod_pessoa(codigo_pessoa);
+    cout<< "Código do Livro: ";
+    cin >> codigo_livro;
+    emp.set_cod_livro(codigo_livro);
+    cout << "\nData de Empréstimo: ";
+    cout<< "Dia: ";
+    cin>> dia;
+    cout << "Mês: ";
+    cin>> mes;
+    cout << "Ano: ";
+    cin>> ano;
+    data_emprestimo.setDia(dia);
+    data_emprestimo.setMes(mes);
+    data_emprestimo.setAno(ano);
+    emp.set_data_emprestimo(data_emprestimo);
+    cout << "\nData de prevista para devolução: ";
+    cout << "Dia: ";
+    cin>> dia;
+    cout << "Mes: ";
+    cin>> mes;
+    cout << "Ano: ";
+    cin>> ano;
+    data_prev_dev.setDia(dia);
+    data_prev_dev.setMes(mes);
+    data_prev_dev.setAno(ano);
+    emp.set_data_prev_dev(data_prev_dev);
+    cout << "\nData de devolução: ";
+    cout << "Dia: ";
+    cin>> dia;
+    cout << "Mes: ";
+    cin>> mes;
+    cout << "Ano: ";
+    cin>> ano;
+    data_devolucao.setDia(dia);
+    data_devolucao.setMes(mes);
+    data_devolucao.setAno(ano);
+    emp.set_data_devolucao(data_devolucao);
+    return emp;
+}
+
 
 // Menu principal
 int main() {
@@ -187,6 +243,7 @@ int main() {
     vector<Autores> autores;
     vector<Generos> generos;
     vector<Livros> livros;
+    vector<Emprestimo> emprestimos;
 
     do {
         cout << "\n=== MENU PRINCIPAL ===\n";
@@ -208,6 +265,7 @@ int main() {
                     cout << "4. Cadastrar Autor\n";
                     cout << "5. Cadastrar Gênero\n";
                     cout << "6. Cadastrar Livro\n";
+                    cout << "7. Cadastrar Empréstimo \n";
                     cout << "0. Voltar ao menu principal\n";
                     cout << "Escolha uma opção: ";
                     cin >> opcaoCadastro;
@@ -230,9 +288,12 @@ int main() {
                             generos.push_back(leitura_genero());
                             break;
                         case 6:
-                            livros.push_back(leitura_livros());
+                            livros.push_back(leitura_livros(editoras, autores, generos));
                             break;
-                        case 0:
+                        case 7:
+                            emprestimos.push_back(leitura_emprestimo());
+                            break;
+                            case 0:
                             cout << "Voltando ao menu principal...\n";
                             break;
                         default:
@@ -253,7 +314,9 @@ int main() {
 
     } while (opcao != 0);
 
-    cout << "Nome editora: " << editoras[1].getnome_editora();
+    if (!editoras.empty()) {
+        cout << "Nome editora (primeira cadastrada): " << editoras[0].getnome_editora() << endl;
+    }
 
     return 0;
 }
