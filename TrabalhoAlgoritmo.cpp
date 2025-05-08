@@ -3,12 +3,12 @@
 #include <vector>
 using namespace std;
 
-#include "Autores.h"
 #include "Cidades.h"
+#include "Pessoas.h"
 #include "Editoras.h"
+#include "Autores.h"
 #include "Generos.h"
 #include "Livros.h"
-#include "Pessoas.h"
 #include "Data.h"
 #include "Emprestimo.h"
 
@@ -139,7 +139,7 @@ Generos leitura_genero() {
 }
 
 // Função para leitura da classe Livros
-Livros leitura_livros(const vector<Editoras>& editora, const vector<Autores>& autor, const vector<Generos>& genero) {
+Livros leitura_livros(const vector<Editoras>& editoras, const vector<Autores>& autores, const vector<Generos>& generos) {
     Livros l;
     int codigo, codigo_editora, codigo_autor, codigo_genero;
     string nome, disponivel;
@@ -159,14 +159,17 @@ Livros leitura_livros(const vector<Editoras>& editora, const vector<Autores>& au
     cout << "Código (Editora): ";
     cin >> codigo_editora;
     l.setCod_editora(codigo_editora);
+    l.dadoseditora(editoras);
 
     cout << "Código (Autor): ";
     cin >> codigo_autor;
     l.setCod_autor(codigo_autor);
+    l.dadosautor(autores);
 
     cout << "Código (Gênero): ";
     cin >> codigo_genero;
     l.setCod_genero(codigo_genero);
+    l.dadosgenero(generos);
 
     cin.ignore();
 
@@ -177,24 +180,29 @@ Livros leitura_livros(const vector<Editoras>& editora, const vector<Autores>& au
     return l;
 }
 
-// Função para leitura da classe Emprestimo;
 Emprestimo leitura_emprestimo() {
     Emprestimo emp;
     int codigo_emprestimo, codigo_pessoa, codigo_livro;
     int dia, mes, ano;
+
     Data data_emprestimo;
     Data data_prev_dev;
     Data data_devolucao;
+
     cout << "\n\nInserir dados do Empréstimo\n";
+
     cout << "Código do Empréstimo: ";
     cin >> codigo_emprestimo;
     emp.set_cod_emprestimo(codigo_emprestimo);
+
     cout << "Código da Pessoa: ";
     cin >> codigo_pessoa;
     emp.set_cod_pessoa(codigo_pessoa);
+
     cout<< "Código do Livro: ";
     cin >> codigo_livro;
     emp.set_cod_livro(codigo_livro);
+
     cout << "\nData de Empréstimo: ";
     cout<< "Dia: ";
     cin>> dia;
@@ -202,10 +210,12 @@ Emprestimo leitura_emprestimo() {
     cin>> mes;
     cout << "Ano: ";
     cin>> ano;
+
     data_emprestimo.setDia(dia);
     data_emprestimo.setMes(mes);
     data_emprestimo.setAno(ano);
     emp.set_data_emprestimo(data_emprestimo);
+
     cout << "\nData de prevista para devolução: ";
     cout << "Dia: ";
     cin>> dia;
@@ -213,10 +223,12 @@ Emprestimo leitura_emprestimo() {
     cin>> mes;
     cout << "Ano: ";
     cin>> ano;
+
     data_prev_dev.setDia(dia);
     data_prev_dev.setMes(mes);
     data_prev_dev.setAno(ano);
     emp.set_data_prev_dev(data_prev_dev);
+
     cout << "\nData de devolução: ";
     cout << "Dia: ";
     cin>> dia;
@@ -224,10 +236,12 @@ Emprestimo leitura_emprestimo() {
     cin>> mes;
     cout << "Ano: ";
     cin>> ano;
+
     data_devolucao.setDia(dia);
     data_devolucao.setMes(mes);
     data_devolucao.setAno(ano);
     emp.set_data_devolucao(data_devolucao);
+
     return emp;
 }
 
@@ -265,7 +279,7 @@ int main() {
                     cout << "4. Cadastrar Autor\n";
                     cout << "5. Cadastrar Gênero\n";
                     cout << "6. Cadastrar Livro\n";
-                    cout << "7. Cadastrar Empréstimo \n";
+                    cout << "7. Cadastrar Empréstimo\n";
                     cout << "0. Voltar ao menu principal\n";
                     cout << "Escolha uma opção: ";
                     cin >> opcaoCadastro;
@@ -293,7 +307,7 @@ int main() {
                         case 7:
                             emprestimos.push_back(leitura_emprestimo());
                             break;
-                            case 0:
+                        case 0:
                             cout << "Voltando ao menu principal...\n";
                             break;
                         default:
@@ -314,9 +328,7 @@ int main() {
 
     } while (opcao != 0);
 
-    if (!editoras.empty()) {
-        cout << "Nome editora (primeira cadastrada): " << editoras[0].getnome_editora() << endl;
-    }
+    cout << "Nome editora: " << editoras[1].getnome_editora();
 
     return 0;
 }
