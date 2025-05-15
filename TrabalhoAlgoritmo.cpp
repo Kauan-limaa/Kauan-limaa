@@ -1,6 +1,7 @@
 #include <iostream>
 #include <locale.h>
 #include <vector>
+#include <ctime>
 using namespace std;
 
 #include "Cidades.h"
@@ -19,7 +20,6 @@ Cidades leitura_cidades() {
     string nome, uf;
 
     cout << "\n\nInserir dados de uma cidade\n";
-
     cout << "Código: ";
     cin >> codigo;
     c.setcod_cidade(codigo);
@@ -44,7 +44,6 @@ Pessoas leitura_pessoas(const vector<Cidades>& cidades) {
     string nome, cpf, endereco;
 
     cout << "\n\nInserir dados de uma pessoa\n";
-
     cout << "Código: ";
     cin >> codigo;
     p.setcod_pessoa(codigo);
@@ -78,7 +77,6 @@ Editoras leitura_editoras() {
     string nome;
 
     cout << "\n\nInserir dados da editora\n";
-
     cout << "Código: ";
     cin >> codigo;
     e.setcod_editora(codigo);
@@ -103,7 +101,6 @@ Autores leitura_autores() {
     string nome;
 
     cout << "\n\nInserir dados do autor\n";
-
     cout << "Código: ";
     cin >> codigo;
     a.set_cod_autor(codigo);
@@ -124,7 +121,6 @@ Generos leitura_genero() {
     string nome;
 
     cout << "\n\nInserir dados de gênero\n";
-
     cout << "Código: ";
     cin >> codigo;
     g.setcod_genero(codigo);
@@ -145,7 +141,6 @@ Livros leitura_livros(const vector<Editoras>& editoras, const vector<Autores>& a
     string nome, disponivel;
 
     cout << "\n\nInserir dados de livros\n";
-
     cout << "Código: ";
     cin >> codigo;
     l.setCod_livros(codigo);
@@ -173,16 +168,18 @@ Livros leitura_livros(const vector<Editoras>& editoras, const vector<Autores>& a
 
     cin.ignore();
 
-    cout << "Livro disponível? (Sim ou Não): ";
+    cout << "Livro disponível? (S ou N): ";
     getline(cin, disponivel);
     l.setDisponivel(disponivel);
 
     return l;
 }
 
-Emprestimo leitura_emprestimo() {
+Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pessoas,
+                              vector<Cidades>& cidades, vector<Livros>& livros,
+                              vector<Editoras>& editoras, vector<Autores>& autores) {
     Emprestimo emp;
-    int codigo_emprestimo, codigo_pessoa, codigo_livro;
+    int codigo_pessoa, codigo_livro;
     int dia, mes, ano;
 
     Data data_emprestimo;
@@ -191,56 +188,63 @@ Emprestimo leitura_emprestimo() {
 
     cout << "\n\nInserir dados do Empréstimo\n";
 
-    cout << "Código do Empréstimo: ";
-    cin >> codigo_emprestimo;
+    int codigo_emprestimo = emprestimos.empty() ? 1 : emprestimos.back().getCod_emprestimo() + 1;
+    cout << "Código do Empréstimo: " << codigo_emprestimo << endl;
     emp.set_cod_emprestimo(codigo_emprestimo);
 
     cout << "Código da Pessoa: ";
     cin >> codigo_pessoa;
     emp.set_cod_pessoa(codigo_pessoa);
+    emp.dadospessoa(pessoas, cidades);
 
-    cout<< "Código do Livro: ";
+    cout << "Código do Livro: ";
     cin >> codigo_livro;
     emp.set_cod_livro(codigo_livro);
+    emp.dadoslivros(livros, editoras, autores);
 
-    cout << "\nData de Empréstimo: ";
-    cout<< "Dia: ";
-    cin>> dia;
-    cout << "Mês: ";
-    cin>> mes;
-    cout << "Ano: ";
-    cin>> ano;
+    bool verifica = emp.verifica_disponibilidade(livros);
 
-    data_emprestimo.setDia(dia);
-    data_emprestimo.setMes(mes);
-    data_emprestimo.setAno(ano);
-    emp.set_data_emprestimo(data_emprestimo);
+    if (verifica) {
+        time_t t = time(0);
+        tm* now = localtime(&t);
 
-    cout << "\nData de prevista para devolução: ";
-    cout << "Dia: ";
-    cin>> dia;
-    cout << "Mes: ";
-    cin>> mes;
-    cout << "Ano: ";
-    cin>> ano;
+        data_emprestimo.setDia(now->tm_mday);
+        data_emprestimo.setMes(now->tm_mon + 1);
+        data_emprestimo.setAno(now->tm_year + 1900);
+        emp.set_data_emprestimo(data_emprestimo);
 
-    data_prev_dev.setDia(dia);
-    data_prev_dev.setMes(mes);
-    data_prev_dev.setAno(ano);
-    emp.set_data_prev_dev(data_prev_dev);
+        cout << "Data de empréstimo: " << data_emprestimo.getDia() << "/"
+                                        << data_emprestimo.getMes() << "/"
+                                        << data_emprestimo.getAno() << endl;
 
-    cout << "\nData de devolução: ";
-    cout << "Dia: ";
-    cin>> dia;
-    cout << "Mes: ";
-    cin>> mes;
-    cout << "Ano: ";
-    cin>> ano;
+        data_prev_dev.setDia(now->tm_mday + 7);
+        data_prev_dev.setMes(now->tm_mon + 1);
+        data_prev_dev.setAno(now->tm_year + 1900);
+        emp.set_data_prev_dev(data_prev_dev);
 
-    data_devolucao.setDia(dia);
-    data_devolucao.setMes(mes);
-    data_devolucao.setAno(ano);
-    emp.set_data_devolucao(data_devolucao);
+        cout << "Previsão de devolução: " << data_prev_dev.getDia() << "/"
+                                        << data_prev_dev.getMes() << "/"
+                                        << data_prev_dev.getAno() << endl;
+
+        for (auto& l : livros) {
+            if (l.getCod_livros() == codigo_livro) {
+                l.setDisponivel("N");
+                break;
+            }
+        }
+
+        cout << "\nData de devolução:\n";
+        cout << "Dia: "; cin >> dia;
+        cout << "Mês: "; cin >> mes;
+        cout << "Ano: "; cin >> ano;
+
+        data_devolucao.setDia(dia);
+        data_devolucao.setMes(mes);
+        data_devolucao.setAno(ano);
+        emp.set_data_devolucao(data_devolucao);
+    } else {
+        cout << "\nLivro indisponível no momento!\n";
+    }
 
     return emp;
 }
@@ -268,7 +272,7 @@ int main() {
         cin.ignore();
 
         switch (opcao) {
-            case 1:
+            case 1: {
                 int opcaoCadastro;
 
                 do {
@@ -305,7 +309,8 @@ int main() {
                             livros.push_back(leitura_livros(editoras, autores, generos));
                             break;
                         case 7:
-                            emprestimos.push_back(leitura_emprestimo());
+                            emprestimos.push_back(leitura_emprestimo(emprestimos, pessoas, cidades, livros,
+                                                                     editoras, autores));
                             break;
                         case 0:
                             cout << "Voltando ao menu principal...\n";
@@ -317,7 +322,7 @@ int main() {
 
                 } while (opcaoCadastro != 0);
                 break;
-
+            }
             case 0:
                 cout << "Saindo do menu.\n";
                 break;
@@ -328,7 +333,6 @@ int main() {
 
     } while (opcao != 0);
 
-    cout << "Nome editora: " << editoras[1].getnome_editora();
 
     return 0;
 }
