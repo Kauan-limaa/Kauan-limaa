@@ -1,3 +1,4 @@
+
 class Emprestimo {
 private:
     int cod_emprestimo;
@@ -25,6 +26,10 @@ public:
     void set_data_prev_dev(const Data& data_prev_dev) { this->data_prev_dev = data_prev_dev; }
     void set_data_devolucao(const Data& data_devolucao) { this->data_devolucao = data_devolucao; }
 
+    void dadospessoa(const vector<Pessoas>& pessoas, const vector<Cidades>& cidades)const;
+    void dadoslivros(const vector<Livros>& livros, const vector<Editoras>& editoras,
+                     const vector<Autores>& autores) const;
+    bool verifica_disponibilidade(const vector<Livros>& livros) const;
 };
 
 Emprestimo::Emprestimo(int cod_emprestimo, int cod_pessoa, int cod_livro,
@@ -35,4 +40,76 @@ const Data& data_emprestimo, const Data& data_prev_dev, const Data& data_devoluc
     this -> data_emprestimo = data_emprestimo;
     this -> data_prev_dev = data_prev_dev;
     this -> data_devolucao = data_devolucao;
+}
+
+void Emprestimo::dadospessoa(const vector<Pessoas>& pessoas, const vector<Cidades>& cidades) const{
+    for (const Pessoas& p : pessoas) {
+        if (p.getcod_pessoa() == cod_pessoa) {
+            cout << "Nome: " << p.getnome_pessoa() << endl;
+
+            for (const Cidades& c : cidades) {
+                if(c.getcod_cidade() == p.getcod_cidade()){
+                    cout << "Cidade: " << c.getdescricao_cidade() << endl;
+                }
+            }
+            return;
+        }
+    }
+
+    cout << "Pessoa não encontrada para o código" << endl;
+}
+
+void Emprestimo::dadoslivros(const vector<Livros>& livros, const vector<Editoras>& editores,
+                             const vector<Autores>& autores) const {
+    bool livroEncontrado = false;
+
+    for (const Livros& l : livros) {
+        if (l.getCod_livros() == cod_livro) {
+            livroEncontrado = true;
+            cout << "Livro: " << l.getNome() << endl;
+
+            bool editoraEncontrada = false;
+            for (const Editoras& e : editores) {
+                if (e.getcod_editora() == l.getCod_editora()) {
+                    cout << "Editora: " << e.getnome_editora() << endl;
+                    editoraEncontrada = true;
+                    break;
+                }
+            }
+            if (!editoraEncontrada)
+                cout << "Editora não encontrada." << endl;
+
+            bool autorEncontrado = false;
+            for (const Autores& a : autores) {
+                if (a.get_cod_autor() == l.getCod_autor()) {
+                    cout << "Autor: " << a.get_nome() << endl;
+                    autorEncontrado = true;
+                    break;
+                }
+            }
+            if (!autorEncontrado)
+                cout << "Autor não encontrado." << endl;
+
+            break;
+        }
+    }
+
+    if (!livroEncontrado)
+        cout << "Livro não encontrado." << endl;
+}
+
+
+bool Emprestimo::verifica_disponibilidade(const vector<Livros>& livros) const {
+    for (const Livros& l : livros) {
+        if (l.getCod_livros() == cod_livro) {
+            if (l.getDisponivel() == "S" || l.getDisponivel() == "s") {
+                return true;
+            } else {
+                cout << "Livro não disponível." << endl;
+                return false;
+            }
+        }
+    }
+    cout << "Livro não encontrado." << endl;
+    return false;
 }
