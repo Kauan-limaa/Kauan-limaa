@@ -1,4 +1,3 @@
-
 class Emprestimo {
 private:
     int cod_emprestimo;
@@ -42,7 +41,7 @@ const Data& data_emprestimo, const Data& data_prev_dev, const Data& data_devoluc
     this -> data_devolucao = data_devolucao;
 }
 
-void Emprestimo::dadospessoa(const vector<Pessoas>& pessoas, const vector<Cidades>& cidades) const{
+void Emprestimo::dadospessoa(const vector<Pessoas>& pessoas, const vector<Cidades>& cidades) const {
     for (const Pessoas& p : pessoas) {
         if (p.getcod_pessoa() == cod_pessoa) {
             cout << "Nome: " << p.getnome_pessoa() << endl;
@@ -93,7 +92,6 @@ void Emprestimo::dadoslivros(const vector<Livros>& livros, const vector<Editoras
             break;
         }
     }
-
     if (!livroEncontrado)
         cout << "Livro não encontrado." << endl;
 }
@@ -110,6 +108,5 @@ bool Emprestimo::verifica_disponibilidade(const vector<Livros>& livros) const {
             }
         }
     }
-    cout << "Livro não encontrado." << endl;
     return false;
 }
