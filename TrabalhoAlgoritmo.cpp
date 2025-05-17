@@ -175,16 +175,15 @@ Livros leitura_livros(const vector<Editoras>& editoras, const vector<Autores>& a
     return l;
 }
 
+// Função para empréstimo de um livro
 Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pessoas,
                               vector<Cidades>& cidades, vector<Livros>& livros,
                               vector<Editoras>& editoras, vector<Autores>& autores) {
     Emprestimo emp;
     int codigo_pessoa, codigo_livro;
-    int dia, mes, ano;
 
     Data data_emprestimo;
     Data data_prev_dev;
-    Data data_devolucao;
 
     cout << "\n\nInserir dados do Empréstimo\n";
 
@@ -214,8 +213,8 @@ Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& 
         emp.set_data_emprestimo(data_emprestimo);
 
         cout << "Data de empréstimo: " << data_emprestimo.getDia() << "/"
-                                        << data_emprestimo.getMes() << "/"
-                                        << data_emprestimo.getAno() << endl;
+                                       << data_emprestimo.getMes() << "/"
+                                       << data_emprestimo.getAno() << endl;
 
         data_prev_dev.setDia(now->tm_mday + 7);
         data_prev_dev.setMes(now->tm_mon + 1);
@@ -229,25 +228,20 @@ Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& 
         for (auto& l : livros) {
             if (l.getCod_livros() == codigo_livro) {
                 l.setDisponivel("N");
+                cout << "\nEmpréstimo realizado com sucesso!" << endl;
                 break;
             }
         }
-
-        cout << "\nData de devolução:\n";
-        cout << "Dia: "; cin >> dia;
-        cout << "Mês: "; cin >> mes;
-        cout << "Ano: "; cin >> ano;
-
-        data_devolucao.setDia(dia);
-        data_devolucao.setMes(mes);
-        data_devolucao.setAno(ano);
-        emp.set_data_devolucao(data_devolucao);
     } else {
-        cout << "\nLivro indisponível no momento!\n";
+        cout << "Empréstimo não realizado." << endl;
     }
-
     return emp;
 }
+
+
+// Função para devolução de um livro
+
+
 
 
 // Menu principal
