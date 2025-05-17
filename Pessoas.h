@@ -17,10 +17,10 @@ public:
     Pessoas();
     Pessoas(int, string, string, string, int);
 
-    int getcod_pessoa() { return this->cod_pessoa; }
-    string getnome_pessoa() { return this->nome_pessoa; }
-    string getcpf() { return this->cpf; }
-    string getendereco() { return this->endereco; }
+    int getcod_pessoa() const { return this->cod_pessoa; }
+    string getnome_pessoa() const { return this->nome_pessoa; }
+    string getcpf() const { return this->cpf; }
+    string getendereco() const { return this->endereco; }
     int getcod_cidade() const { return this->cod_cidade; }
 
     void setcod_pessoa(int _cod_pessoa) { this->cod_pessoa = _cod_pessoa; }
