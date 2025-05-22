@@ -240,8 +240,84 @@ Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& 
 
 
 // Função para devolução de um livro
+void devolucao_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pessoas,
+                          vector<Cidades>& cidades, vector<Livros>& livros,
+                          vector<Editoras>& editoras, vector<Autores>& autores) {
+    int codigo_emprestimo;
+    cout << "\n\n--- Devolução de Livro ---\n";
+    cout << "Informe o código do empréstimo a ser devolvido: ";
+    cin >> codigo_emprestimo;
 
+    int inicio = 0;
+    int fim = emprestimos.size() - 1;
+    int meio;
+    Emprestimo* emp = nullptr;
 
+    while (inicio <= fim) {
+        meio = inicio + (fim - inicio) / 2;
+
+        if (emprestimos[meio].getCod_emprestimo() == codigo_emprestimo) {
+            emp = &emprestimos[meio];
+            break;
+        } else if (emprestimos[meio].getCod_emprestimo() < codigo_emprestimo) {
+            inicio = meio + 1;
+        } else {
+            fim = meio - 1;
+        }
+    }
+
+    if (emp == nullptr) {
+        cout << "Empréstimo não encontrado.\n";
+        return;
+    }
+    //
+    int dia, mes, ano;
+    cout << "Informe a data de devolução:\n";
+    cout << "Dia: "; cin >> dia;
+    cout << "Mês: "; cin >> mes;
+    cout << "Ano: "; cin >> ano;
+
+    Data data_devolucao;
+    data_devolucao.setDia(dia);
+    data_devolucao.setMes(mes);
+    data_devolucao.setAno(ano);
+    emp->set_data_devolucao(data_devolucao);
+//
+    for (auto& livro : livros) {
+        if (livro.getCod_livros() == emp->getCod_livro()) {
+            livro.setDisponivel("S");
+            break;
+        }
+    }
+
+    cout << "Livro devolvido com sucesso!\n";
+}
+
+//função para mostrar os livros emprestados
+void mostraremp(const vector<Livros>& livros) {
+    cout << "\n\n--- Livros Emprestados ---\n";
+    cout << "Código / Nome do Livro\n";
+    cout << "------------------------\n";
+    int livrosEmprestados = 0;
+    int livrosDisponiveis = 0;
+
+    for (const auto& l : livros) {
+        if (l.getDisponivel() == "N") {
+            cout << l.getCod_livros() << "      / " << l.getNome() << endl;
+            livrosEmprestados++;
+        } else {
+            livrosDisponiveis++;
+        }
+    }
+    if (livrosEmprestados == 0) {
+        cout << "Nenhum livro atualmente emprestado.\n";
+    }
+
+    cout << "\n--- Resumo ---\n";
+    cout << "Total de livros emprestados: " << livrosEmprestados << endl;
+    cout << "Total de livros disponíveis: " << livrosDisponiveis << endl;
+    cout << "---------------------------\n";
+}
 
 
 // Menu principal
@@ -260,6 +336,8 @@ int main() {
     do {
         cout << "\n=== MENU PRINCIPAL ===\n";
         cout << "1. Cadastrar\n";
+        cout << "2. Devolução\n";
+        cout << "3. Dados livros emprestados";
         cout << "0. Sair\n";
         cout << "Escolha uma opção: ";
         cin >> opcao;
@@ -317,6 +395,10 @@ int main() {
                 } while (opcaoCadastro != 0);
                 break;
             }
+            case 2:
+                devolucao_emprestimo(emprestimos, pessoas, cidades, livros,
+                                     editoras, autores);
+                break;
             case 0:
                 cout << "Saindo do menu.\n";
                 break;
