@@ -177,7 +177,7 @@ Livros leitura_livros(const vector<Editoras>& editoras, const vector<Autores>& a
 
 Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pessoas,
                               vector<Cidades>& cidades, vector<Livros>& livros,
-                              vector<Editoras>& editoras, vector<Autores>& autores) {
+                              vector<Editoras>& editoras, vector<Autores>& autores, vector<Generos>& generos) {
     Emprestimo emp;
     int codigo_pessoa, codigo_livro;
 
@@ -198,7 +198,7 @@ Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& 
     cout << "Código do Livro: ";
     cin >> codigo_livro;
     emp.set_cod_livro(codigo_livro);
-    emp.dadoslivros(livros, editoras, autores);
+    emp.dadoslivros(livros, editoras, generos, autores);
 
     bool verifica = emp.verifica_disponibilidade(livros);
 
@@ -249,12 +249,11 @@ void devolucao_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pess
 
     int inicio = 0;
     int fim = emprestimos.size() - 1;
-    int meio;
     Emprestimo* emp = nullptr;
 
+    // Busca binária
     while (inicio <= fim) {
-        meio = inicio + (fim - inicio) / 2;
-
+        int meio = inicio + (fim - inicio) / 2;
         if (emprestimos[meio].getCod_emprestimo() == codigo_emprestimo) {
             emp = &emprestimos[meio];
             break;
@@ -269,7 +268,14 @@ void devolucao_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pess
         cout << "Empréstimo não encontrado.\n";
         return;
     }
-    //
+
+    // Mostrar a data em que o livro foi emprestado
+    Data data_emprestimo = emp->getData_emprestimo();
+    cout << "Data do empréstimo: " << data_emprestimo.getDia() << "/"
+         << data_emprestimo.getMes() << "/"
+         << data_emprestimo.getAno() << endl;
+
+    // Solicitar a data de devolução
     int dia, mes, ano;
     cout << "Informe a data de devolução:\n";
     cout << "Dia: "; cin >> dia;
@@ -281,7 +287,8 @@ void devolucao_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pess
     data_devolucao.setMes(mes);
     data_devolucao.setAno(ano);
     emp->set_data_devolucao(data_devolucao);
-//
+
+    // Marcar o livro como disponível
     for (auto& livro : livros) {
         if (livro.getCod_livros() == emp->getCod_livro()) {
             livro.setDisponivel("S");
@@ -292,7 +299,8 @@ void devolucao_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pess
     cout << "Livro devolvido com sucesso!\n";
 }
 
-//função para mostrar os livros emprestados
+
+//mostrar livros emprestados
 void mostraremp(const vector<Livros>& livros) {
     cout << "\n\n--- Livros Emprestados ---\n";
     cout << "Código / Nome do Livro\n";
@@ -318,28 +326,34 @@ void mostraremp(const vector<Livros>& livros) {
     cout << "---------------------------\n";
 }
 
-void mostrardev_atrasada(const vector<Emprestimo>& emprestimos, const vector<Pessoas>& pessoas,
-                         const vector<Livros>& livros, const vector<Autores>& autores,
-                         const vector<Editoras>& editoras) {
+//mostrar empréstimos atrasados
+void mostrardev_atrasada(vector<Emprestimo>& emprestimos, vector<Pessoas>& pessoas,
+                         vector<Livros>& livros, vector<Autores>& autores,
+                         vector<Editoras>& editoras) {
     cout << "\nLivros com devolução em atraso\n\n";
 
-    int dia_atual = 28;
-    int mes_atual = 7;
-    int ano_atual = 2025;
+    int dia_atual, mes_atual, ano_atual;
+    cout << "Informe a data atual:\n";
+    cout << "Dia: "; cin >> dia_atual;
+    cout << "Mês: "; cin >> mes_atual;
+    cout << "Ano: "; cin >> ano_atual;
 
     bool atrasos_encontrados = false;
 
-    for (const auto& e : emprestimos) {
-        Data prev = e.getData_prev_dev();
-        Data dev = e.getData_devolucao();
+    for (Emprestimo& e : emprestimos) {
+        // Ignorar empréstimos já devolvidos
+        Data d = e.getData_devolucao();
+        if (d.getDia() == 1 && d.getMes() == 1 && d.getAno() == 1900) {
+            // Considera que o livro ainda NÃO foi devolvido
 
+
+
+        Data prev = e.getData_prev_dev();
 
         bool em_atraso =
-            (
-                (prev.getAno() < ano_atual) ||
-                (prev.getAno() == ano_atual && prev.getMes() < mes_atual) ||
-                (prev.getAno() == ano_atual && prev.getMes() == mes_atual && prev.getDia() < dia_atual)
-            );
+            (prev.getAno() < ano_atual) ||
+            (prev.getAno() == ano_atual && prev.getMes() < mes_atual) ||
+            (prev.getAno() == ano_atual && prev.getMes() == mes_atual && prev.getDia() < dia_atual);
 
         if (em_atraso) {
             atrasos_encontrados = true;
@@ -363,14 +377,15 @@ void mostrardev_atrasada(const vector<Emprestimo>& emprestimos, const vector<Pes
             dataAtual.tm_mon = mes_atual - 1;
             dataAtual.tm_year = ano_atual - 1900;
 
-            time_t tPrev = std::mktime(&dataPrevista);
-            time_t tAtual = std::mktime(&dataAtual);
+            time_t tPrev = mktime(&dataPrevista);
+            time_t tAtual = mktime(&dataAtual);
 
-            double diferenca = std::difftime(tAtual, tPrev);
+            double diferenca = difftime(tAtual, tPrev);
             int dias_atraso = static_cast<int>(diferenca / (60 * 60 * 24));
 
             cout << "Dias de atraso: " << dias_atraso << " dia(s)\n\n";
         }
+    }
     }
 
     if (!atrasos_encontrados) {
@@ -379,19 +394,26 @@ void mostrardev_atrasada(const vector<Emprestimo>& emprestimos, const vector<Pes
 }
 
 
-
-
 // Menu principal
 int main() {
     setlocale(LC_ALL, "Portuguese");
 
+    ///
+    Cidades cidade(1, "assis","sp" );
+    Pessoas pessoa(2, "ana", "517.938.348-06"," teste 20",1);
+    Editoras editora(2, "galera", 1);
+    Autores autor(4, "raphael");
+    Generos genero(5, "terror");
+    Livros livro(6, "testando", 2, 4, 5, "s" );
+    ///
+
     int opcao;
-    vector<Cidades> cidades;
-    vector<Pessoas> pessoas;
-    vector<Editoras> editoras;
-    vector<Autores> autores;
-    vector<Generos> generos;
-    vector<Livros> livros;
+    vector<Cidades> cidades= {cidade};
+    vector<Pessoas> pessoas= {pessoa};
+    vector<Editoras> editoras= {editora};
+    vector<Autores> autores= {autor};
+    vector<Generos> generos= {genero};
+    vector<Livros> livros= {livro};
     vector<Emprestimo> emprestimos;
 
     do {
@@ -444,7 +466,7 @@ int main() {
                             break;
                         case 7:
                             emprestimos.push_back(leitura_emprestimo(emprestimos, pessoas, cidades, livros,
-                                                                     editoras, autores));
+                                                                     editoras, autores,generos));
                             break;
                         case 0:
                             cout << "Voltando ao menu principal...\n";
