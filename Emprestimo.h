@@ -29,6 +29,9 @@ public:
     void dadoslivros(const vector<Livros>& livros, const vector<Editoras>& editoras,
                      const vector<Autores>& autores) const;
     bool verifica_disponibilidade(const vector<Livros>& livros) const;
+    void buscapessoa(const vector<Pessoas>& pessoas, const int& busca)const;
+    void buscalivro(const vector<Livros>& livros, const vector<Editoras>& editoras,
+                    const vector<Autores>& autores, const int& busca)const;
 };
 
 Emprestimo::Emprestimo(int cod_emprestimo, int cod_pessoa, int cod_livro,
@@ -109,4 +112,80 @@ bool Emprestimo::verifica_disponibilidade(const vector<Livros>& livros) const {
         }
     }
     return false;
+}
+
+void Emprestimo::buscapessoa(const vector<Pessoas>& pessoas, const int& busca) const {
+    int inicio = 0;
+    int fim = pessoas.size() - 1;
+    bool encontrada = false;
+
+    while (inicio <= fim) {
+        int meio = (inicio + fim) / 2;
+        int codAtual = pessoas[meio].getcod_pessoa();
+
+        if (codAtual == busca) {
+            cout << "Nome da Pessoa: " << pessoas[meio].getnome_pessoa() << endl;
+            encontrada = true;
+            break;
+        } else if (codAtual < busca) {
+            inicio = meio + 1;
+        } else {
+            fim = meio - 1;
+        }
+    }
+
+    if (!encontrada) {
+        cout << "Pessoa com código " << busca << " não encontrada." << endl;
+    }
+}
+
+
+
+void Emprestimo::buscalivro(const vector<Livros>& livros, const vector<Editoras>& editoras,
+                             const vector<Autores>& autores, const int& busca) const {
+    int inicio = 0;
+    int fim = livros.size() - 1;
+
+    while (inicio <= fim) {
+        int meio = (inicio + fim) / 2;
+        int codAtual = livros[meio].getCod_livros();
+
+        if (codAtual == busca) {
+            const Livros& l = livros[meio];
+
+            cout << "Nome do Livro: " << l.getNome() << endl;
+
+            bool editoraEncontrada = false;
+            for (const Editoras& e : editoras) {
+                if (e.getcod_editora() == l.getCod_editora()) {
+                    cout << "Nome da Editora: " << e.getnome_editora() << endl;
+                    editoraEncontrada = true;
+                    break;
+                }
+            }
+            if (!editoraEncontrada) {
+                cout << "Editora não encontrada." << endl;
+            }
+
+            bool autorEncontrado = false;
+            for (const Autores& a : autores) {
+                if (a.get_cod_autor() == l.getCod_autor()) {
+                    cout << "Nome do Autor: " << a.get_nome() << endl;
+                    autorEncontrado = true;
+                    break;
+                }
+            }
+            if (!autorEncontrado) {
+                cout << "Autor não encontrado." << endl;
+            }
+
+            return;
+        } else if (codAtual < busca) {
+            inicio = meio + 1;
+        } else {
+            fim = meio - 1;
+        }
+    }
+
+    cout << "Livro não encontrado.\n";
 }
