@@ -25,13 +25,13 @@ public:
     void set_data_prev_dev(const Data& data_prev_dev) { this->data_prev_dev = data_prev_dev; }
     void set_data_devolucao(const Data& data_devolucao) { this->data_devolucao = data_devolucao; }
 
-    void dadospessoa(const vector<Pessoas>& pessoas, const vector<Cidades>& cidades)const;
-    void dadoslivros(const vector<Livros>& livros, const vector<Editoras>& editoras,
-                     const vector<Autores>& autores) const;
-    bool verifica_disponibilidade(const vector<Livros>& livros) const;
-    void buscapessoa(const vector<Pessoas>& pessoas, const int& busca)const;
-    void buscalivro(const vector<Livros>& livros, const vector<Editoras>& editoras,
-                    const vector<Autores>& autores, const int& busca)const;
+    void dadospessoa( vector<Pessoas>& pessoas,  vector<Cidades>& cidades);
+    void dadoslivros( vector<Livros>& livros,  vector<Editoras>& editoras, vector <Generos>& generos,
+                      vector<Autores>& autores) ;
+    bool verifica_disponibilidade( vector<Livros>& livros) ;
+    void buscapessoa( vector<Pessoas>& pessoas, const int& busca);
+    void buscalivro( vector<Livros>& livros,  vector<Editoras>& editoras,
+                     vector<Autores>& autores, const int& busca);
 };
 
 Emprestimo::Emprestimo(int cod_emprestimo, int cod_pessoa, int cod_livro,
@@ -44,7 +44,7 @@ const Data& data_emprestimo, const Data& data_prev_dev, const Data& data_devoluc
     this -> data_devolucao = data_devolucao;
 }
 
-void Emprestimo::dadospessoa(const vector<Pessoas>& pessoas, const vector<Cidades>& cidades) const {
+void Emprestimo::dadospessoa( vector<Pessoas>& pessoas,  vector<Cidades>& cidades)  {
     for (const Pessoas& p : pessoas) {
         if (p.getcod_pessoa() == cod_pessoa) {
             cout << "Nome: " << p.getnome_pessoa() << endl;
@@ -54,21 +54,27 @@ void Emprestimo::dadospessoa(const vector<Pessoas>& pessoas, const vector<Cidade
                     cout << "Cidade: " << c.getdescricao_cidade() << endl;
                 }
             }
-            return;
         }
+        if (!cod_pessoa) cout << "Pessoa não encontrada";
     }
-
-    cout << "Pessoa não encontrada para o código" << endl;
 }
 
-void Emprestimo::dadoslivros(const vector<Livros>& livros, const vector<Editoras>& editores,
-                             const vector<Autores>& autores) const {
+void Emprestimo::dadoslivros( vector<Livros>& livros,  vector<Editoras>& editores, vector <Generos>& generos, vector<Autores>& autores)  {
     bool livroEncontrado = false;
 
     for (const Livros& l : livros) {
         if (l.getCod_livros() == cod_livro) {
             livroEncontrado = true;
-            cout << "Livro: " << l.getNome() << endl;
+            cout << "Livro: " << l.getNome()<< endl;
+
+            bool generoEncontrado = false;
+                for (const Generos& e : generos) {
+                    if (e.getcod_genero() == l.getCod_genero()) {
+                        cout << "Genêro: " << e.getdescricao_genero() << endl;
+                        generoEncontrado = true;
+                        break;
+                    }
+                }
 
             bool editoraEncontrada = false;
             for (const Editoras& e : editores) {
@@ -100,7 +106,7 @@ void Emprestimo::dadoslivros(const vector<Livros>& livros, const vector<Editoras
 }
 
 
-bool Emprestimo::verifica_disponibilidade(const vector<Livros>& livros) const {
+bool Emprestimo::verifica_disponibilidade( vector<Livros>& livros)  {
     for (const Livros& l : livros) {
         if (l.getCod_livros() == cod_livro) {
             if (l.getDisponivel() == "S" || l.getDisponivel() == "s") {
@@ -114,7 +120,7 @@ bool Emprestimo::verifica_disponibilidade(const vector<Livros>& livros) const {
     return false;
 }
 
-void Emprestimo::buscapessoa(const vector<Pessoas>& pessoas, const int& busca) const {
+void Emprestimo::buscapessoa( vector<Pessoas>& pessoas,  const int& busca)  {
     int inicio = 0;
     int fim = pessoas.size() - 1;
     bool encontrada = false;
@@ -141,8 +147,8 @@ void Emprestimo::buscapessoa(const vector<Pessoas>& pessoas, const int& busca) c
 
 
 
-void Emprestimo::buscalivro(const vector<Livros>& livros, const vector<Editoras>& editoras,
-                             const vector<Autores>& autores, const int& busca) const {
+void Emprestimo::buscalivro( vector<Livros>& livros,  vector<Editoras>& editoras,
+                              vector<Autores>& autores,  const int& busca)  {
     int inicio = 0;
     int fim = livros.size() - 1;
 
@@ -189,3 +195,4 @@ void Emprestimo::buscalivro(const vector<Livros>& livros, const vector<Editoras>
 
     cout << "Livro não encontrado.\n";
 }
+
