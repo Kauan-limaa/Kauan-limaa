@@ -67,6 +67,5 @@ void Livros::dadosgenero(const vector<Generos>& generos) const{
             return;
         }
     }
-
     cout << "Gênero não encontrada para o código" << endl;
 }
