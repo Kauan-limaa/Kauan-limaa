@@ -175,7 +175,6 @@ Livros leitura_livros(const vector<Editoras>& editoras, const vector<Autores>& a
     return l;
 }
 
-// Função para empréstimo de um livro
 Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pessoas,
                               vector<Cidades>& cidades, vector<Livros>& livros,
                               vector<Editoras>& editoras, vector<Autores>& autores) {
@@ -319,6 +318,68 @@ void mostraremp(const vector<Livros>& livros) {
     cout << "---------------------------\n";
 }
 
+void mostrardev_atrasada(const vector<Emprestimo>& emprestimos, const vector<Pessoas>& pessoas,
+                         const vector<Livros>& livros, const vector<Autores>& autores,
+                         const vector<Editoras>& editoras) {
+    cout << "\nLivros com devolução em atraso\n\n";
+
+    int dia_atual = 28;
+    int mes_atual = 7;
+    int ano_atual = 2025;
+
+    bool atrasos_encontrados = false;
+
+    for (const auto& e : emprestimos) {
+        Data prev = e.getData_prev_dev();
+        Data dev = e.getData_devolucao();
+
+
+        bool em_atraso =
+            (
+                (prev.getAno() < ano_atual) ||
+                (prev.getAno() == ano_atual && prev.getMes() < mes_atual) ||
+                (prev.getAno() == ano_atual && prev.getMes() == mes_atual && prev.getDia() < dia_atual)
+            );
+
+        if (em_atraso) {
+            atrasos_encontrados = true;
+
+            cout << "Código do Empréstimo: " << e.getCod_emprestimo() << endl;
+            cout << "Código da Pessoa: " << e.getCod_pessoa() << endl;
+            e.buscapessoa(pessoas, e.getCod_pessoa());
+            cout << "Código do Livro: " << e.getCod_livro() << endl;
+            e.buscalivro(livros, editoras, autores, e.getCod_livro());
+
+            cout << "Data Prevista de Devolução: "
+                 << prev.getDia() << "/" << prev.getMes() << "/" << prev.getAno() << endl;
+
+            tm dataPrevista = {};
+            dataPrevista.tm_mday = prev.getDia();
+            dataPrevista.tm_mon = prev.getMes() - 1;
+            dataPrevista.tm_year = prev.getAno() - 1900;
+
+            tm dataAtual = {};
+            dataAtual.tm_mday = dia_atual;
+            dataAtual.tm_mon = mes_atual - 1;
+            dataAtual.tm_year = ano_atual - 1900;
+
+            time_t tPrev = std::mktime(&dataPrevista);
+            time_t tAtual = std::mktime(&dataAtual);
+
+            double diferenca = std::difftime(tAtual, tPrev);
+            int dias_atraso = static_cast<int>(diferenca / (60 * 60 * 24));
+
+            cout << "Dias de atraso: " << dias_atraso << " dia(s)\n\n";
+        }
+    }
+
+    if (!atrasos_encontrados) {
+        cout << "Nenhum empréstimo em atraso encontrado.\n";
+    }
+}
+
+
+
 
 // Menu principal
 int main() {
@@ -337,7 +398,8 @@ int main() {
         cout << "\n=== MENU PRINCIPAL ===\n";
         cout << "1. Cadastrar\n";
         cout << "2. Devolução\n";
-        cout << "3. Dados livros emprestados";
+        cout << "3. Dados livros emprestados\n";
+        cout << "4. Dados livros devoluções em atraso\n";
         cout << "0. Sair\n";
         cout << "Escolha uma opção: ";
         cin >> opcao;
@@ -395,9 +457,15 @@ int main() {
                 } while (opcaoCadastro != 0);
                 break;
             }
-            case 2:
+             case 2:
                 devolucao_emprestimo(emprestimos, pessoas, cidades, livros,
                                      editoras, autores);
+                break;
+            case 3:
+                mostraremp(livros);
+                break;
+            case 4:
+                mostrardev_atrasada(emprestimos, pessoas, livros, autores, editoras);
                 break;
             case 0:
                 cout << "Saindo do menu.\n";
