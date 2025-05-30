@@ -1,8 +1,3 @@
-#include <iostream>
-#include <string>
-#include <cctype>
-using namespace std;
-
 class Pessoas{
 private:
     int cod_pessoa;
