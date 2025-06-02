@@ -38,34 +38,65 @@ private:
       this->disponivel = disponivel;
 }
 
-void Livros::dadoseditora(const vector<Editoras>& editoras) const{
-    for (const Editoras& e : editoras) {
-        if (e.getcod_editora() == cod_editora) {
-            cout << "Editora: " << e.getnome_editora() << endl;
+
+
+void Livros::dadoseditora(const vector<Editoras>& editoras) const {
+    int comeco = 0;
+    int fim = (int)editoras.size() - 1;
+
+    while (comeco <= fim) {
+        int meio = comeco + (fim - comeco) / 2;
+        int cod_meio = editoras[meio].getcod_editora();
+
+        if (cod_meio == cod_editora) {
+            cout << "Editora: " << editoras[meio].getnome_editora() << endl;
             return;
+        }
+        else if (cod_meio < cod_editora) {
+            comeco = meio + 1;
+        }
+        else {
+            fim = meio - 1;
         }
     }
 
     cout << "Editora não encontrada para o código" << endl;
 }
 
-void Livros::dadosautor(const vector<Autores>& autores) const{
-    for (const Autores& a : autores) {
-        if (a.get_cod_autor() == cod_autor) {
-            cout << "Autor: " << a.get_nome() << endl;
+void Livros::dadosautor(const vector<Autores>& autores_ordenados) const {
+    int comeco = 0;
+    int fim = autores_ordenados.size() - 1;
+
+    while (comeco <= fim) {
+        int meio = (comeco + fim) / 2;
+        if (autores_ordenados[meio].get_cod_autor() == cod_autor) {
+            cout << "Autor: " << autores_ordenados[meio].get_nome() << endl;
             return;
+        } else if (autores_ordenados[meio].get_cod_autor() < cod_autor) {
+            comeco = meio + 1;
+        } else {
+            fim = meio - 1;
         }
     }
 
     cout << "Autor não encontrada para o código" << endl;
 }
 
-void Livros::dadosgenero(const vector<Generos>& generos) const{
-    for (const Generos& g : generos) {
-        if (g.getcod_genero() == cod_genero) {
-            cout << "Gênero: " << g.getdescricao_genero() << endl;
+void Livros::dadosgenero(const vector<Generos>& generos_ordenados) const {
+    int comeco = 0;
+    int fim = generos_ordenados.size() - 1;
+
+    while (comeco <= fim) {
+        int meio = (comeco + fim) / 2;
+        if (generos_ordenados[meio].getcod_genero() == cod_genero) {
+            cout << "Gênero: " << generos_ordenados[meio].getdescricao_genero() << endl;
             return;
+        } else if (generos_ordenados[meio].getcod_genero() < cod_genero) {
+            comeco = meio + 1;
+        } else {
+            fim = meio - 1;
         }
     }
+
     cout << "Gênero não encontrada para o código" << endl;
 }
