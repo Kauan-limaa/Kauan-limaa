@@ -25,10 +25,10 @@ public:
     void set_data_prev_dev(const Data& data_prev_dev) { this->data_prev_dev = data_prev_dev; }
     void set_data_devolucao(const Data& data_devolucao) { this->data_devolucao = data_devolucao; }
 
-    void dadospessoa( vector<Pessoas>& pessoas,  vector<Cidades>& cidades);
+    void dadospessoa( const vector<Pessoas>& pessoas_ordenadas, const vector<Cidades>& cidades_ordenadas);
     void dadoslivros( vector<Livros>& livros,  vector<Editoras>& editoras, vector <Generos>& generos,
                       vector<Autores>& autores) ;
-    bool verifica_disponibilidade( vector<Livros>& livros) ;
+    bool verifica_disponibilidade( const vector<Livros>& livros) ;
     void buscapessoa( vector<Pessoas>& pessoas, const int& busca);
     void buscalivro( vector<Livros>& livros,  vector<Editoras>& editoras,
                      vector<Autores>& autores, const int& busca);
@@ -44,20 +44,47 @@ const Data& data_emprestimo, const Data& data_prev_dev, const Data& data_devoluc
     this -> data_devolucao = data_devolucao;
 }
 
-void Emprestimo::dadospessoa( vector<Pessoas>& pessoas,  vector<Cidades>& cidades)  {
-    for (const Pessoas& p : pessoas) {
-        if (p.getcod_pessoa() == cod_pessoa) {
-            cout << "Nome: " << p.getnome_pessoa() << endl;
+void Emprestimo::dadospessoa(const vector<Pessoas>& pessoas_ordenadas, const vector<Cidades>& cidades_ordenadas) {
+    int inicio = 0;
+    int fim = pessoas_ordenadas.size() - 1;
+    bool pessoa_encontrada = false;
 
-            for (const Cidades& c : cidades) {
-                if(c.getcod_cidade() == p.getcod_cidade()){
-                    cout << "Cidade: " << c.getdescricao_cidade() << endl;
+    while (inicio <= fim) {
+        int meio = (inicio + fim) / 2;
+
+        if (pessoas_ordenadas[meio].getcod_pessoa() == cod_pessoa) {
+            pessoa_encontrada = true;
+            cout << "Nome: " << pessoas_ordenadas[meio].getnome_pessoa() << endl;
+
+            int cod_cidade = pessoas_ordenadas[meio].getcod_cidade();
+            int ini_cidade = 0;
+            int fim_cidade = cidades_ordenadas.size() - 1;
+
+            while (ini_cidade <= fim_cidade) {
+                int meio_cidade = (ini_cidade + fim_cidade) / 2;
+                if (cidades_ordenadas[meio_cidade].getcod_cidade() == cod_cidade) {
+                    cout << "Cidade: " << cidades_ordenadas[meio_cidade].getdescricao_cidade() << endl;
+                    break;
+                } else if (cidades_ordenadas[meio_cidade].getcod_cidade() < cod_cidade) {
+                    ini_cidade = meio_cidade + 1;
+                } else {
+                    fim_cidade = meio_cidade - 1;
                 }
             }
+
+            break;
+        } else if (pessoas_ordenadas[meio].getcod_pessoa() < cod_pessoa) {
+            inicio = meio + 1;
+        } else {
+            fim = meio - 1;
         }
-        if (!cod_pessoa) cout << "Pessoa não encontrada";
+    }
+
+    if (!pessoa_encontrada) {
+        cout << "Pessoa não encontrada" << endl;
     }
 }
+
 
 void Emprestimo::dadoslivros( vector<Livros>& livros,  vector<Editoras>& editores, vector <Generos>& generos, vector<Autores>& autores)  {
     bool livroEncontrado = false;
@@ -106,17 +133,28 @@ void Emprestimo::dadoslivros( vector<Livros>& livros,  vector<Editoras>& editore
 }
 
 
-bool Emprestimo::verifica_disponibilidade( vector<Livros>& livros)  {
-    for (const Livros& l : livros) {
-        if (l.getCod_livros() == cod_livro) {
-            if (l.getDisponivel() == "S" || l.getDisponivel() == "s") {
+bool Emprestimo::verifica_disponibilidade(const vector<Livros>& livros_ordenados) {
+    int inicio = 0;
+    int fim = livros_ordenados.size() - 1;
+
+    while (inicio <= fim) {
+        int meio = (inicio + fim) / 2;
+
+        if (livros_ordenados[meio].getCod_livros() == cod_livro) {
+            string disp = livros_ordenados[meio].getDisponivel();
+            if (disp == "S" || disp == "s") {
                 return true;
             } else {
                 cout << "Livro não disponível." << endl;
                 return false;
             }
+        } else if (livros_ordenados[meio].getCod_livros() < cod_livro) {
+            inicio = meio + 1;
+        } else {
+            fim = meio - 1;
         }
     }
+
     return false;
 }
 
@@ -195,4 +233,3 @@ void Emprestimo::buscalivro( vector<Livros>& livros,  vector<Editoras>& editoras
 
     cout << "Livro não encontrado.\n";
 }
-
