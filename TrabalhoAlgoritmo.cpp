@@ -134,6 +134,7 @@ Generos leitura_genero() {
     return g;
 }
 
+
 // Função para leitura da classe Livros
 Livros leitura_livros(const vector<Editoras>& editoras, const vector<Autores>& autores, const vector<Generos>& generos) {
     Livros l;
@@ -154,16 +155,66 @@ Livros leitura_livros(const vector<Editoras>& editoras, const vector<Autores>& a
     cout << "Código (Editora): ";
     cin >> codigo_editora;
     l.setCod_editora(codigo_editora);
-    l.dadoseditora(editoras);
+
+    vector<Editoras> editoras_ordenadas = editoras;
+
+    for (size_t i = 0; i < editoras_ordenadas.size(); i++) {
+    size_t menor = i;
+    for (size_t j = i + 1; j < editoras_ordenadas.size(); j++) {
+        if (editoras_ordenadas[j].getcod_editora() < editoras_ordenadas[menor].getcod_editora()) {
+            menor = j;
+        }
+    }
+    if (menor != i) {
+        Editoras temp = editoras_ordenadas[i];
+        editoras_ordenadas[i] = editoras_ordenadas[menor];
+        editoras_ordenadas[menor] = temp;
+        }
+    }
+
+    l.dadoseditora(editoras_ordenadas);
+
 
     cout << "Código (Autor): ";
     cin >> codigo_autor;
     l.setCod_autor(codigo_autor);
+    vector<Autores> autores_ordenados = autores;
+
+    for (size_t i = 0; i < autores_ordenados.size(); i++) {
+        size_t menor = i;
+    for (size_t j = i + 1; j < autores_ordenados.size(); j++) {
+        if (autores_ordenados[j].get_cod_autor() < autores_ordenados[menor].get_cod_autor()) {
+            menor = j;
+        }
+    }
+    if (menor != i) {
+        Autores temp = autores_ordenados[i];
+        autores_ordenados[i] = autores_ordenados[menor];
+        autores_ordenados[menor] = temp;
+    }
+    }
+
     l.dadosautor(autores);
 
     cout << "Código (Gênero): ";
     cin >> codigo_genero;
     l.setCod_genero(codigo_genero);
+    vector<Generos> generos_ordenados = generos;
+
+    for (size_t i = 0; i < generos_ordenados.size(); i++) {
+        size_t menor = i;
+        for (size_t j = i + 1; j < generos_ordenados.size(); j++) {
+            if (generos_ordenados[j].getcod_genero() < generos_ordenados[menor].getcod_genero()) {
+            menor = j;
+            }
+        }
+        if (menor != i) {
+            Generos temp = generos_ordenados[i];
+            generos_ordenados[i] = generos_ordenados[menor];
+            generos_ordenados[menor] = temp;
+            }
+    }
+
     l.dadosgenero(generos);
 
     cin.ignore();
@@ -193,6 +244,39 @@ Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& 
     cout << "Código da Pessoa: ";
     cin >> codigo_pessoa;
     emp.set_cod_pessoa(codigo_pessoa);
+
+    vector<Pessoas> pessoas_ordenadas = pessoas;
+
+    for (size_t i = 0; i < pessoas_ordenadas.size(); i++) {
+        size_t menor = i;
+        for (size_t j = i + 1; j < pessoas_ordenadas.size(); j++) {
+            if (pessoas_ordenadas[j].getcod_pessoa() < pessoas_ordenadas[menor].getcod_pessoa()) {
+                menor = j;
+            }
+        }
+        if (menor != i) {
+            Pessoas temp = pessoas_ordenadas[i];
+            pessoas_ordenadas[i] = pessoas_ordenadas[menor];
+            pessoas_ordenadas[menor] = temp;
+        }
+    }
+
+    vector<Cidades> cidades_ordenadas = cidades;
+
+    for (size_t i = 0; i < cidades_ordenadas.size(); i++) {
+        size_t menor = i;
+        for (size_t j = i + 1; j < cidades_ordenadas.size(); j++) {
+            if (cidades_ordenadas[j].getcod_cidade() < cidades_ordenadas[menor].getcod_cidade()) {
+                menor = j;
+            }
+        }
+        if (menor != i) {
+            Cidades temp = cidades_ordenadas[i];
+            cidades_ordenadas[i] = cidades_ordenadas[menor];
+            cidades_ordenadas[menor] = temp;
+        }
+    }
+
     emp.dadospessoa(pessoas, cidades);
 
     cout << "Código do Livro: ";
@@ -200,7 +284,24 @@ Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& 
     emp.set_cod_livro(codigo_livro);
     emp.dadoslivros(livros, editoras, generos, autores);
 
-    bool verifica = emp.verifica_disponibilidade(livros);
+
+    vector<Livros> livros_ordenados = livros;
+
+    for (size_t i = 0; i < livros_ordenados.size(); i++) {
+        size_t menor = i;
+        for (size_t j = i + 1; j < livros_ordenados.size(); j++) {
+            if (livros_ordenados[j].getCod_livros() < livros_ordenados[menor].getCod_livros()) {
+            menor = j;
+            }
+        }
+        if (menor != i) {
+            Livros temp = livros_ordenados[i];
+            livros_ordenados[i] = livros_ordenados[menor];
+            livros_ordenados[menor] = temp;
+        }
+    }
+
+    bool verifica = emp.verifica_disponibilidade(livros_ordenados);
 
     if (verifica) {
         time_t t = time(0);
@@ -251,7 +352,7 @@ void devolucao_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pess
     int fim = emprestimos.size() - 1;
     Emprestimo* emp = nullptr;
 
-    // Busca binária
+
     while (inicio <= fim) {
         int meio = inicio + (fim - inicio) / 2;
         if (emprestimos[meio].getCod_emprestimo() == codigo_emprestimo) {
@@ -275,7 +376,7 @@ void devolucao_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pess
          << data_emprestimo.getMes() << "/"
          << data_emprestimo.getAno() << endl;
 
-    // Solicitar a data de devolução
+    
     int dia, mes, ano;
     cout << "Informe a data de devolução:\n";
     cout << "Dia: "; cin >> dia;
@@ -288,7 +389,7 @@ void devolucao_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pess
     data_devolucao.setAno(ano);
     emp->set_data_devolucao(data_devolucao);
 
-    // Marcar o livro como disponível
+    
     for (auto& livro : livros) {
         if (livro.getCod_livros() == emp->getCod_livro()) {
             livro.setDisponivel("S");
@@ -341,10 +442,10 @@ void mostrardev_atrasada(vector<Emprestimo>& emprestimos, vector<Pessoas>& pesso
     bool atrasos_encontrados = false;
 
     for (Emprestimo& e : emprestimos) {
-        // Ignorar empréstimos já devolvidos
+        
         Data d = e.getData_devolucao();
         if (d.getDia() == 1 && d.getMes() == 1 && d.getAno() == 1900) {
-            // Considera que o livro ainda NÃO foi devolvido
+
 
 
 
