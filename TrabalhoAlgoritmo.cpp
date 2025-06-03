@@ -13,6 +13,8 @@ using namespace std;
 #include "Data.h"
 #include "Emprestimo.h"
 
+//Alunos: Ana Carolina Messa (2411600271) e Kauan Lima Garcia Pires (2411600659)
+
 // Função para leitura da classe Cidades
 Cidades leitura_cidades() {
     Cidades c;
