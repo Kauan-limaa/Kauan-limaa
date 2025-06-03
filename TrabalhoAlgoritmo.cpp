@@ -226,6 +226,7 @@ Livros leitura_livros(const vector<Editoras>& editoras, const vector<Autores>& a
     return l;
 }
 
+//Função para empréstimo de um livro
 Emprestimo leitura_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pessoas,
                               vector<Cidades>& cidades, vector<Livros>& livros,
                               vector<Editoras>& editoras, vector<Autores>& autores, vector<Generos>& generos) {
@@ -376,7 +377,7 @@ void devolucao_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pess
          << data_emprestimo.getMes() << "/"
          << data_emprestimo.getAno() << endl;
 
-    
+
     int dia, mes, ano;
     cout << "Informe a data de devolução:\n";
     cout << "Dia: "; cin >> dia;
@@ -389,7 +390,7 @@ void devolucao_emprestimo(vector<Emprestimo>& emprestimos, vector<Pessoas>& pess
     data_devolucao.setAno(ano);
     emp->set_data_devolucao(data_devolucao);
 
-    
+
     for (auto& livro : livros) {
         if (livro.getCod_livros() == emp->getCod_livro()) {
             livro.setDisponivel("S");
@@ -430,7 +431,7 @@ void mostraremp(const vector<Livros>& livros) {
 //mostrar empréstimos atrasados
 void mostrardev_atrasada(vector<Emprestimo>& emprestimos, vector<Pessoas>& pessoas,
                          vector<Livros>& livros, vector<Autores>& autores,
-                         vector<Editoras>& editoras) {
+                         vector<Editoras>& editoras, vector<Generos>& generos) {
     cout << "\nLivros com devolução em atraso\n\n";
 
     int dia_atual, mes_atual, ano_atual;
@@ -442,7 +443,7 @@ void mostrardev_atrasada(vector<Emprestimo>& emprestimos, vector<Pessoas>& pesso
     bool atrasos_encontrados = false;
 
     for (Emprestimo& e : emprestimos) {
-        
+
         Data d = e.getData_devolucao();
         if (d.getDia() == 1 && d.getMes() == 1 && d.getAno() == 1900) {
 
@@ -463,8 +464,7 @@ void mostrardev_atrasada(vector<Emprestimo>& emprestimos, vector<Pessoas>& pesso
             cout << "Código da Pessoa: " << e.getCod_pessoa() << endl;
             e.buscapessoa(pessoas, e.getCod_pessoa());
             cout << "Código do Livro: " << e.getCod_livro() << endl;
-            e.buscalivro(livros, editoras, autores, e.getCod_livro());
-
+            e.buscalivro(livros, editoras, autores, generos, e.getCod_livro());
             cout << "Data Prevista de Devolução: "
                  << prev.getDia() << "/" << prev.getMes() << "/" << prev.getAno() << endl;
 
@@ -501,7 +501,7 @@ int main() {
 
     ///
     Cidades cidade(1, "assis","sp" );
-    Pessoas pessoa(2, "ana", "517.938.348-06"," teste 20",1);
+    Pessoas pessoa(2, "pessoa1", "517.938.348-06"," teste 20",1);
     Editoras editora(2, "galera", 1);
     Autores autor(4, "raphael");
     Generos genero(5, "terror");
@@ -588,7 +588,7 @@ int main() {
                 mostraremp(livros);
                 break;
             case 4:
-                mostrardev_atrasada(emprestimos, pessoas, livros, autores, editoras);
+                mostrardev_atrasada(emprestimos, pessoas, livros, autores, editoras, generos);
                 break;
             case 0:
                 cout << "Saindo do menu.\n";
